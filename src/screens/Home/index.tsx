@@ -12,14 +12,21 @@ interface FoodData {
 
 export function Home() {
   const [data, setData] = useState<FoodData[]>([]);
+  const [foodsOnTheDietPercentage, setFoodsOnTheDietPercentage] = useState(0);
+  const [foodAmount, setFoodAmount] = useState(0);
+  const [foodsOnTheDiet, setFoodsOnTheDiet] = useState(0);
+  const [foodsOffTheDiet, setFoodsOffTheDiet] = useState(0);
+  const [foodSequence, setFoodSequence] = useState(0);
+
   const navigation = useNavigation();
 
   function toStatistics() {
     navigation.navigate('statistics', {
-      foodAmount: 109,
-      foodsOffTheDiet: 10,
-      foodsOnTheDiet: 99,
-      foodsOnTheDietPercentage: 90.86,
+      foodAmount,
+      foodsOffTheDiet,
+      foodsOnTheDiet,
+      foodsOnTheDietPercentage,
+      foodSequence,
     });
   }
 
@@ -31,12 +38,45 @@ export function Home() {
     navigation.navigate('foodInfo', values);
   }
 
+  function getFoodStats(foods: any[]) {
+    const amountFoods = foods.length;
+
+    setFoodAmount(amountFoods);
+
+    const amountFoodsOnTheDiet = foods.filter((food) => food.onTheDiet).length;
+
+    setFoodsOnTheDiet(amountFoodsOnTheDiet);
+
+    const amountFoodsOffTheDiet = foods.filter((food) => !food.onTheDiet).length;
+
+    setFoodsOffTheDiet(amountFoodsOffTheDiet);
+
+    const percentage = (amountFoodsOnTheDiet * 100) / amountFoods;
+
+    setFoodsOnTheDietPercentage(Number(percentage.toFixed(0)));
+
+    let sequence = 0;
+    let largerSequence = 0;
+
+    foods.map((food) => {
+      if (food.onTheDiet) {
+        sequence += 1;
+      } else {
+        if (largerSequence < sequence) {
+          largerSequence = sequence;
+        }
+        sequence = 0;
+      }
+    });
+
+    setFoodSequence(largerSequence > sequence ? largerSequence : sequence);
+  }
+
   async function handleFoods() {
     const { days, foods } = await getFoods();
+    let foodData = [];
 
     days.map((day) => {
-      let foodData = [];
-
       foods.map((food) => {
         if (food.date === day) {
           foodData = [...foodData, food];
@@ -44,6 +84,8 @@ export function Home() {
       });
 
       setData((state) => [...state, { day, data: foodData }]);
+
+      getFoodStats(foods);
     });
   }
 
@@ -58,7 +100,7 @@ export function Home() {
         <Avatar />
       </Header>
 
-      <CardPercent value={90.86} onPress={toStatistics} />
+      <CardPercent value={foodsOnTheDietPercentage} onPress={toStatistics} />
 
       <ContentButton>
         <TextFoods>Refeições</TextFoods>

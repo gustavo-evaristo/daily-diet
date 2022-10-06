@@ -3,6 +3,7 @@ export interface StatisticsParams {
   foodAmount: number;
   foodsOnTheDiet: number;
   foodsOffTheDiet: number;
+  foodSequence: number;
 }
 
 export interface AfterAddFoodProps {

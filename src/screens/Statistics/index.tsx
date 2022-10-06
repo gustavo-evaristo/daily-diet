@@ -18,7 +18,8 @@ export function Statistics() {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const { foodAmount, foodsOffTheDiet, foodsOnTheDiet, foodsOnTheDietPercentage } = route.params as StatisticsParams;
+  const { foodAmount, foodsOffTheDiet, foodsOnTheDiet, foodsOnTheDietPercentage, foodSequence } =
+    route.params as StatisticsParams;
 
   function goBack() {
     navigation.goBack();
@@ -39,7 +40,7 @@ export function Statistics() {
         <TextStatistics>Estatísticas gerais</TextStatistics>
 
         <Card>
-          <TitleCard>22</TitleCard>
+          <TitleCard>{foodSequence}</TitleCard>
           <DescriptionPercentage>Melhor sequencia de pratos dentro da dieta</DescriptionPercentage>
         </Card>
 
